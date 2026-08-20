@@ -1,0 +1,5 @@
+# The /config.json must not be ignored for now because Dockerfile.api+flagger+listener needs to copy that file into the image.
+# In order not to disrupt any final stages of version-2.3 delivery like container images, config.json will be copied into the container image.
+# In the future we want to ignore this file, not ship it inside the container image, and only mount it during runtime.
+#/config.json
+/config*.json

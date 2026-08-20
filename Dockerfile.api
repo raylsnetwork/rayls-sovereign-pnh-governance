@@ -1,0 +1,32 @@
+# Use an official Golang runtime as a parent image
+FROM golang:1.26.4-bookworm AS build
+
+# Set the working directory inside the container
+WORKDIR /go/src/app
+
+# Copy the local package files to the container's workspace
+COPY . .
+
+# Build the Go app
+RUN CGO_ENABLED=0 go build -v ./cmd/api
+
+
+FROM scratch
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the SSL certificates
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+# Copy from build container
+COPY --from=build /go/src/app/api .
+
+# COPY SQL FILES FOR MIGRATION
+COPY --from=build /go/src/app/migrations* /app/migrations
+
+# Expose port 8080 to the outside world
+EXPOSE 8080
+
+# Command to run the executable
+CMD ["./api", "run"]

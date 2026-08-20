@@ -1,0 +1,395 @@
+{
+	"info": {
+		"_postman_id": "86d1fb50-e386-48f6-89e4-89e6769e17a6",
+		"name": "Governance-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8114659"
+	},
+	"item": [
+		{
+			"name": "Audit - Transactions",
+			"item": [
+				{
+					"name": "List Transactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/transactions?page=1&limit=10",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "transactions"],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "limit", "value": "10"},
+								{"key": "sourceChainId", "value": "1337", "disabled": true},
+								{"key": "destinationChainId", "value": "1338", "disabled": true},
+								{"key": "fromAddress", "value": "0x0000000000000000000000000000000000000000", "disabled": true},
+								{"key": "toAddress", "value": "0x0000000000000000000000000000000000000000", "disabled": true},
+								{"key": "resourceId", "value": "290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563", "disabled": true},
+								{"key": "messageId", "value": "test-message-id", "disabled": true},
+								{"key": "initiatedAfter", "value": "2024-01-01T00:00:00Z", "disabled": true},
+								{"key": "initiatedBefore", "value": "2024-12-31T23:59:59Z", "disabled": true}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transaction by MessageId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/transactions/:messageId",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "transactions", ":messageId"],
+							"variable": [
+								{"key": "messageId", "value": "test-message-id"}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transactions by Batch ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/transactions/batch/:batchId",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "transactions", "batch", ":batchId"],
+							"variable": [
+								{"key": "batchId", "value": "test-batch-id"}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transactions by Enygma Batch ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/transactions/enygma/batch/:batchId",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "transactions", "enygma", "batch", ":batchId"],
+							"variable": [
+								{"key": "batchId", "value": "c5504b76-ce75-4f82-8957-054ce868c265"}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DvP Transaction by Transaction ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/transactions/dvp/:transactionId",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "transactions", "dvp", ":transactionId"],
+							"variable": [
+								{"key": "transactionId", "value": "test-transaction-id"}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DvP Swap Transactions by Shared ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/transactions/dvp/swap/:sharedId",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "transactions", "dvp", "swap", ":sharedId"],
+							"variable": [
+								{"key": "sharedId", "value": "test-shared-id"}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Audit - Participants",
+			"item": [
+				{
+					"name": "List Participants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/participants",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "participants"],
+							"query": [
+								{"key": "name", "value": "test", "disabled": true},
+								{"key": "chainId", "value": "1337", "disabled": true},
+								{"key": "status", "value": "active", "disabled": true, "description": "new|active|inactive|frozen"},
+								{"key": "role", "value": "participant", "disabled": true, "description": "participant|issuer|auditor"},
+								{"key": "createdAfter", "value": "2024-01-01T00:00:00Z", "disabled": true},
+								{"key": "createdBefore", "value": "2024-12-31T23:59:59Z", "disabled": true}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Participant by ChainId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/participants/:chainId",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "participants", ":chainId"],
+							"variable": [
+								{"key": "chainId", "value": "12345"}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Audit - Tokens",
+			"item": [
+				{
+					"name": "List Tokens",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/tokens",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "tokens"],
+							"query": [
+								{"key": "name", "value": "test", "disabled": true},
+								{"key": "symbol", "value": "TST", "disabled": true},
+								{"key": "issuerId", "value": "1337", "disabled": true},
+								{"key": "status", "value": "active", "disabled": true, "description": "new|active|inactive"},
+								{"key": "ercStandard", "value": "erc20", "disabled": true, "description": "erc20|erc721|erc1155"},
+								{"key": "decimals", "value": "18", "disabled": true},
+								{"key": "createdAfter", "value": "2024-01-01T00:00:00Z", "disabled": true},
+								{"key": "createdBefore", "value": "2024-12-31T23:59:59Z", "disabled": true}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Token by ResourceId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/tokens/:resourceId",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "tokens", ":resourceId"],
+							"variable": [
+								{"key": "resourceId", "value": "290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563"}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "ERC20 Token Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/audit/tokens/:resourceId",
+									"host": ["{{base_url}}"],
+									"path": ["audit", "tokens", ":resourceId"],
+									"variable": [
+										{"key": "resourceId", "value": "50bb669a95c7b50b7e8a6f09454034b2b14cf2b85c730dca9a539ca82cb6e350"}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{"key": "Content-Type", "value": "application/json"}
+							],
+							"body": "{\n  \"resourceId\": \"50bb669a95c7b50b7e8a6f09454034b2b14cf2b85c730dca9a539ca82cb6e350\",\n  \"name\": \"TestToken\",\n  \"symbol\": \"TST\",\n  \"ercStandard\": \"erc20\",\n  \"decimals\": 18,\n  \"issuerId\": \"600000\",\n  \"status\": \"active\",\n  \"totalSupply\": 2000000000000000000000030,\n  \"circulatingSupply\": [\n    { \"participantId\": \"600000\", \"balance\": \"2000000000000000000000000\" },\n    { \"participantId\": \"600001\", \"balance\": \"30\" }\n  ]\n}"
+						},
+						{
+							"name": "ERC721 Token Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/audit/tokens/:resourceId",
+									"host": ["{{base_url}}"],
+									"path": ["audit", "tokens", ":resourceId"],
+									"variable": [
+										{"key": "resourceId", "value": "c03004e3ce0784bf68186394306849f9b7b1200073105cd9aeb554a1802b58fd"}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{"key": "Content-Type", "value": "application/json"}
+							],
+							"body": "{\n  \"resourceId\": \"c03004e3ce0784bf68186394306849f9b7b1200073105cd9aeb554a1802b58fd\",\n  \"name\": \"NFTCollection\",\n  \"symbol\": \"NFT\",\n  \"ercStandard\": \"erc721\",\n  \"issuerId\": \"600000\",\n  \"status\": \"active\",\n  \"totalSupply\": 1,\n  \"circulatingSupply\": [\n    { \"participantId\": \"600000\", \"tokenId\": \"0\", \"balance\": \"1\" }\n  ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Blockchain",
+			"item": [
+				{
+					"name": "Get Token Registry Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/token_status/:resourceid",
+							"host": ["{{base_url}}"],
+							"path": ["token_status", ":resourceid"],
+							"variable": [
+								{"key": "resourceid", "value": "290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563"}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Participant Info by ChainId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/participant_info/:chainId",
+							"host": ["{{base_url}}"],
+							"path": ["participant_info", ":chainId"],
+							"variable": [
+								{"key": "chainId", "value": "12345"}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Audit - Header Proofs",
+			"item": [
+				{
+					"name": "List Header Proofs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit/header-proofs?chainId=1337&startBlock=0&endBlock=1000",
+							"host": ["{{base_url}}"],
+							"path": ["audit", "header-proofs"],
+							"query": [
+								{"key": "chainId", "value": "1337", "description": "Required"},
+								{"key": "startBlock", "value": "0", "description": "Required"},
+								{"key": "endBlock", "value": "1000", "description": "Required"},
+								{"key": "page", "value": "1", "disabled": true},
+								{"key": "pageSize", "value": "50", "disabled": true}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Sign Up",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"operator\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/private-network/signup",
+							"host": ["{{base_url}}"],
+							"path": ["private-network", "signup"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"operator\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/private-network/login",
+							"host": ["{{base_url}}"],
+							"path": ["private-network", "login"]
+						},
+						"description": "Returns a JWT token in an HTTP-only Authorization cookie"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Utilities",
+			"item": [
+				{
+					"name": "Flagged Transactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/flagged",
+							"host": ["{{base_url}}"],
+							"path": ["flagged"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Swagger UI",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/swagger/index.html",
+							"host": ["{{base_url}}"],
+							"path": ["swagger", "index.html"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

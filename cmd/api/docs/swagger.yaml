@@ -1,0 +1,1143 @@
+definitions:
+  cmd_api_adapters_handlers.TokenResponse:
+    properties:
+      circulatingSupply:
+        items:
+          $ref: '#/definitions/domain.CirculatingSupplyEntry'
+        type: array
+      createdAt:
+        type: string
+      decimals:
+        type: integer
+      ercStandard:
+        type: string
+      frozenChainIds:
+        items:
+          type: string
+        type: array
+      issuerId:
+        type: string
+      metadataURL:
+        type: string
+      name:
+        type: string
+      resourceId:
+        type: string
+      status:
+        type: string
+      symbol:
+        type: string
+      totalSupply:
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  domain.Balance:
+    properties:
+      amount:
+        type: number
+      chainId:
+        type: string
+      createdAt:
+        type: string
+      ercId:
+        $ref: '#/definitions/domain.BigInt'
+      id:
+        type: string
+      resourceId:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  domain.BigInt:
+    type: object
+  domain.CirculatingSupplyEntry:
+    properties:
+      balance:
+        type: number
+      participantId:
+        type: string
+      tokenId:
+        description: Only present for non-fungible tokens (ERC721, ERC1155)
+        type: string
+    type: object
+  domain.Participant:
+    properties:
+      allowedToBroadcast:
+        type: boolean
+      chainId:
+        type: integer
+      createdAt:
+        type: string
+      flagReason:
+        type: string
+      flaggedAt:
+        type: string
+      id:
+        type: string
+      isFlagged:
+        description: Flagging fields
+        type: boolean
+      name:
+        type: string
+      ownerId:
+        example: 0x29a97C6EfFB8A411DABc6aDEEfaa84f5067C8bbe
+        type: string
+      role:
+        type: string
+      status:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  dto.BatchTransactionDto:
+    properties:
+      amount:
+        description: Transfer amount
+        type: number
+      createdAt:
+        description: DB record creation timestamp
+        type: string
+      destinationAddress:
+        description: Receiver address
+        type: string
+      destinationChainId:
+        description: Destination blockchain ID
+        type: string
+      messageId:
+        description: Transaction message ID
+        type: string
+      sourceAddress:
+        description: Sender address
+        type: string
+      sourceChainId:
+        description: Source blockchain ID
+        type: string
+      tokenSymbol:
+        description: Token symbol
+        type: string
+    type: object
+  dto.HeaderProofListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.HeaderProofResponse'
+        type: array
+      pagination:
+        $ref: '#/definitions/dto.PaginationMetadata'
+    type: object
+  dto.HeaderProofResponse:
+    properties:
+      blockHash:
+        example: 0x4de2a17c6f8b9e3c7a5d2f1e6b9c4a8d3e7f1c5a9b2d8e6f0c4b7a1d9e3f8c5b
+        type: string
+      blockNumber:
+        example: "100"
+        type: string
+      chainId:
+        example: "1337"
+        type: string
+      createdAt:
+        example: "2024-10-31T10:30:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+    type: object
+  dto.PaginationMetadata:
+    properties:
+      currentPage:
+        type: integer
+      pageSize:
+        type: integer
+      totalPages:
+        type: integer
+      totalRecords:
+        type: integer
+    type: object
+  dto.TokenRegistryStatusDto:
+    properties:
+      createdAt:
+        type: string
+      decimals:
+        type: integer
+      ercStandard:
+        type: integer
+      issuerId:
+        type: string
+      metadataUrl:
+        type: string
+      name:
+        type: string
+      resourceId:
+        type: string
+      status:
+        type: integer
+      symbol:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  dto.TransactionDetailDto:
+    properties:
+      amount:
+        type: number
+      createdAt:
+        type: string
+      destinationAddress:
+        type: string
+      destinationChainId:
+        type: string
+      destinationTimestamp:
+        type: string
+      destinationTransactionHash:
+        type: string
+      ercId:
+        type: string
+      hubBlockNumber:
+        type: string
+      hubHash:
+        description: Enygma-specific fields (omitted for non-Enygma)
+        type: string
+      hubTimestamp:
+        type: string
+      messageId:
+        type: string
+      messageType:
+        type: string
+      payload:
+        type: string
+      protocol:
+        type: string
+      resourceId:
+        type: string
+      sourceAddress:
+        type: string
+      sourceChainId:
+        type: string
+      sourceTimestamp:
+        type: string
+      sourceTransactionHash:
+        type: string
+      status:
+        type: string
+      tokenMetadataDescription:
+        type: string
+      tokenMetadataImageUrl:
+        type: string
+      tokenMetadataName:
+        type: string
+      tokenName:
+        type: string
+      tokenSymbol:
+        type: string
+      type:
+        description: Metadata
+        type: string
+    type: object
+  governance-api-go_types.Paginated-cmd_api_adapters_handlers_TokenResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/cmd_api_adapters_handlers.TokenResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /audit/header-proofs:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves blockchain header proofs for a specific Privacy Node
+        (PN) within a given block range. Returns paginated results ordered by block
+        number. Returns an empty array if no headers match the filters.
+      parameters:
+      - description: Chain ID of the Privacy Node
+        example: '"11155111"'
+        in: query
+        name: chainId
+        required: true
+        type: string
+      - description: Start block number (inclusive)
+        example: '"1"'
+        in: query
+        name: startBlock
+        required: true
+        type: string
+      - description: End block number (inclusive)
+        example: '"100"'
+        in: query
+        name: endBlock
+        required: true
+        type: string
+      - description: 'Page number (default: 1)'
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 50, max: 1000)'
+        example: 50
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of header proofs, empty array if none found
+          schema:
+            $ref: '#/definitions/dto.HeaderProofListResponse'
+        "400":
+          description: Invalid parameters specified
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List Header Proofs by Block Range
+      tags:
+      - Audit
+  /audit/participants:
+    get:
+      description: Retrieves a list of participants based on specified query parameters
+        for auditing. Returns an empty array if no participants match the filters.
+      parameters:
+      - description: Participant's name (partial match)
+        in: query
+        name: name
+        type: string
+      - description: Chain ID
+        in: query
+        name: chainId
+        type: string
+      - description: Status of the participant.
+        enum:
+        - new
+        - active
+        - inactive
+        - frozen
+        in: query
+        name: status
+        type: string
+      - description: Role of the participant.
+        enum:
+        - participant
+        - issuer
+        - auditor
+        in: query
+        name: role
+        type: string
+      - description: Creation date after which participants were added (inclusive).
+          Accepts Unix ts, YYYY-MM-DD or ISO8601 formats
+        in: query
+        name: createdAfter
+        type: string
+      - description: Creation date before which participants were added (exclusive).
+          Accepts Unix ts, YYYY-MM-DD or ISO8601 formats
+        in: query
+        name: createdBefore
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Participant'
+            type: array
+        "400":
+          description: Invalid parameters specified
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List Participants by Query Parameters
+      tags:
+      - Audit
+  /audit/participants/{chainId}:
+    get:
+      description: Retrieves a participant's information by their chain ID if it exists
+        in the database.
+      parameters:
+      - description: The chainId of the participant to retrieve
+        in: path
+        name: chainId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Participant'
+        "400":
+          description: Invalid chainId specified
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: No participants found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a Participant by their ChainId
+      tags:
+      - Audit
+  /audit/tokens:
+    get:
+      description: Retrieves a paginated list of tokens based on specified query parameters
+        for auditing. Returns an empty array if no tokens match the filters.
+      parameters:
+      - description: 'Items per page (Default: 10, Max: 100)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Page number (Default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: Token's name (partial match)
+        in: query
+        name: name
+        type: string
+      - description: Issuer ID
+        in: query
+        name: issuerId
+        type: string
+      - description: Status of the token.
+        enum:
+        - new
+        - active
+        - inactive
+        in: query
+        name: status
+        type: string
+      - description: Token type.
+        enum:
+        - erc20
+        - erc721
+        - erc1155
+        - enygma
+        - custom message
+        in: query
+        name: ercStandard
+        type: string
+      - description: Symbol of the token
+        in: query
+        name: symbol
+        type: string
+      - description: Decimals of the token
+        in: query
+        name: decimals
+        type: integer
+      - description: Creation date after which tokens were added (inclusive). Accepts
+          Unix ts, YYYY-MM-DD or ISO8601 formats
+        in: query
+        name: createdAfter
+        type: string
+      - description: Creation date before which tokens were added (exclusive). Accepts
+          Unix ts, YYYY-MM-DD or ISO8601 formats
+        in: query
+        name: createdBefore
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/governance-api-go_types.Paginated-cmd_api_adapters_handlers_TokenResponse'
+        "400":
+          description: Invalid parameters specified
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List Tokens by Query Parameters
+      tags:
+      - Audit
+  /audit/tokens/{resourceId}:
+    get:
+      description: Retrieves a token by its resource ID
+      parameters:
+      - description: The resource ID of the token
+        in: path
+        name: resourceId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cmd_api_adapters_handlers.TokenResponse'
+        "400":
+          description: Invalid resourceId specified
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: No tokens found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Token by Resource ID
+      tags:
+      - Audit
+  /audit/transactions:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a paginated list of transactions based on specified query
+        parameters for auditing. Returns an empty array in data field if no transactions
+        match the filters.
+      parameters:
+      - description: 'Filter by latest transactions (Default: 10)'
+        in: query
+        name: limit
+        type: string
+      - description: 'Filter by pagination page (Default: 1)'
+        in: query
+        name: page
+        type: string
+      - description: Filter by messageId.
+        in: query
+        name: messageId
+        type: string
+      - description: Filter by source chain ID
+        in: query
+        name: sourceChainId
+        type: string
+      - description: Filter by destination chain ID
+        in: query
+        name: destinationChainId
+        type: string
+      - description: Filter by source address
+        in: query
+        name: fromAddress
+        type: string
+      - description: Filter by destination address
+        in: query
+        name: toAddress
+        type: string
+      - description: Filter by resource ID
+        in: query
+        name: resourceId
+        type: string
+      - description: Filter by message type
+        enum:
+        - erc20
+        - erc721
+        - erc1155
+        - enygma
+        - dvp_erc721
+        - dvp_erc1155
+        in: query
+        name: messageType
+        type: string
+      - description: Filter transactions initiated after timestamp. Accepts Unix ts,
+          YYYY-MM-DD or ISO8601 formats
+        in: query
+        name: initiatedAfter
+        type: string
+      - description: Filter transactions initiated before timestamp. Accepts Unix
+          ts, YYYY-MM-DD or ISO8601 formats
+        in: query
+        name: initiatedBefore
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Paginated list of transactions
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid filter parameters
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error fetching transactions
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List Transactions by Query Parameters
+      tags:
+      - Audit
+  /audit/transactions/{messageId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a transaction by its unique message ID.
+      parameters:
+      - description: The message ID
+        in: path
+        name: messageId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TransactionDetailDto'
+        "404":
+          description: Message not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error fetching/processing transaction data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Transaction by Message ID
+      tags:
+      - Audit
+  /audit/transactions/batch/{batchId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves paginated transactions with the same batch ID (non-enygma
+        batches).
+      parameters:
+      - description: The batch ID
+        in: path
+        name: batchId
+        required: true
+        type: string
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 10, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Paginated list of batch transactions
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Batch not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error fetching/processing transaction data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Transactions by Regular Batch ID
+      tags:
+      - Audit
+  /audit/transactions/dvp/{transactionId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a transaction by its unique id.
+      parameters:
+      - description: The transaction id
+        in: path
+        name: transactionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TransactionDetailDto'
+        "404":
+          description: Key not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error fetching/processing transaction data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Transaction by ID
+      tags:
+      - Audit
+  /audit/transactions/dvp/swap/{sharedId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all transactions with the same shared_id (ZkDvp swaps).
+      parameters:
+      - description: The shared ID
+        in: path
+        name: sharedId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of transactions with the same shared_id
+          schema:
+            items:
+              $ref: '#/definitions/dto.BatchTransactionDto'
+            type: array
+        "404":
+          description: Transactions not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error fetching/processing transaction data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Transactions by Shared ID
+      tags:
+      - Audit
+  /audit/transactions/enygma/batch/{batchId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves paginated enygma transactions with the same batch ID.
+      parameters:
+      - description: The batch ID
+        in: path
+        name: batchId
+        required: true
+        type: string
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 10, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Paginated list of batch transactions
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Batch not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error fetching/processing transaction data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Aggregated Transactions by Batch ID
+      tags:
+      - Audit
+  /flagged:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all transactions that have been flagged by the flagger
+        service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'flagged: array of flagged transactions'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Error getting flagged transactions
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get All Flagged Transactions
+      tags:
+      - Audit
+  /participant_info/{chainId}:
+    get:
+      description: Retrieves a participant's information by their chain ID if it exists
+        in the database.
+      parameters:
+      - description: The chainId of the participant to retrieve
+        in: path
+        name: chainId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Participant'
+        "400":
+          description: Invalid chainId specified
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: No participants found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a Participant by their ChainId
+      tags:
+      - Audit
+  /private-network/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a Private Network operator and returns a JWT token
+        in a cookie
+      parameters:
+      - description: Credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            password:
+              type: string
+            username:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body or credentials
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login Private Network Operator
+      tags:
+      - Authentication
+  /private-network/signup:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new Private Network operator account
+      parameters:
+      - description: Credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            password:
+              type: string
+            username:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body or credentials
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Username already exists
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Sign Up Private Network Operator
+      tags:
+      - Authentication
+  /resource_info_all_chains/{resourceid}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves balance information for a resource across all chains
+      parameters:
+      - description: Resource ID
+        in: path
+        name: resourceid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Array of balances across chains
+          schema:
+            items:
+              $ref: '#/definitions/domain.Balance'
+            type: array
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Resource not found in any chain
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - CookieAuth: []
+      summary: Get Balance Across All Chains
+      tags:
+      - Balances
+  /resource_info_list_chains:
+    post:
+      consumes:
+      - application/json
+      description: Retrieves balance information for a resource across specific chains
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            chains:
+              items:
+                type: string
+              type: array
+            resource_id:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Array of balances across specified chains
+          schema:
+            items:
+              $ref: '#/definitions/domain.Balance'
+            type: array
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Resource not found in specified chains
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - CookieAuth: []
+      summary: Get Balance Across Specific Chains
+      tags:
+      - Balances
+  /resources/{chainid}/{resourceid}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Retrieves all balances for a chain or specific resource balance
+        If resourceid is "/" returns all balances, otherwise returns specific resource
+      parameters:
+      - description: Chain ID
+        in: path
+        name: chainid
+        required: true
+        type: string
+      - description: Resource ID (use / for all)
+        in: path
+        name: resourceid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Array of balances or single balance object
+          schema: {}
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - CookieAuth: []
+      summary: Get Balances in Chain
+      tags:
+      - Balances
+  /token_status/{resourceid}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves token status from the database
+      parameters:
+      - description: Resource ID
+        in: path
+        name: resourceid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenRegistryStatusDto'
+        "400":
+          description: Invalid resource ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Token not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - CookieAuth: []
+      summary: Get Token Registry Status
+      tags:
+      - Blockchain
+swagger: "2.0"

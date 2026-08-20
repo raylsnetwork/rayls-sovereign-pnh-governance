@@ -1,0 +1,17 @@
+repos:
+  - repo: local
+    hooks:
+      - id: golangci-fmt
+        name: golangci-lint formatters
+        entry: bash -c 'golangci-lint fmt $@ && git add $@' --
+        language: system
+        types: [go]
+        pass_filenames: true
+
+      - id: golangci-lint
+        name: golangci-lint
+        entry: golangci-lint run --issues-exit-code=0
+        language: system
+        types: [go]
+        pass_filenames: false
+        verbose: true

@@ -1,0 +1,96 @@
+version: "2"
+
+formatters:
+  enable:
+    - gci          # Better import organization with sections
+    - golines      # Formats long lines
+    - gofumpt      # Stricter gofmt with additional rules
+
+  settings:
+    gci:
+      sections:
+        - standard                    # Standard library
+        - default                     # External packages (github.com/...)
+        - prefix(github.com/raylsnetwork/rayls-sovereign-pnh-governance)   # Local packages
+      custom-order: true
+
+    gofumpt:
+      module-path: github.com/raylsnetwork/rayls-sovereign-pnh-governance
+
+    golines:
+      max-len: 120
+      reformat-tags: false
+
+linters:
+  enable:
+    # Logging and context
+    - sloglint      # Enforce structured logging best practices with slog
+    - contextcheck  # Check if functions use non-inherited context
+
+    # General quality
+    - errcheck      # Check for unchecked errors
+    - govet         # Reports suspicious constructs (official Go tool)
+    - staticcheck   # Advanced static analysis for bugs and performance
+    - unused        # Check for unused constants, variables, functions and types
+    - ineffassign   # Detect ineffectual assignments
+    - misspell      # Find commonly misspelled English words in comments
+    - wastedassign  # Find wasted assignment statements
+    - unparam       # Find unused function parameters
+    - revive        # Extensible linter with many rules
+
+    # Error handling
+    - errorlint     # Find code that causes problems with error wrapping
+    - nilerr        # Find code that returns nil even if it checks err != nil
+    - nilnil        # Check that there is no simultaneous return of nil error and invalid value
+
+    # Performance and security
+    - prealloc      # Find slice declarations that could be preallocated
+    - gosec         # Inspect source code for security problems
+
+    # Complexity
+    - gocyclo       # Compute cyclomatic complexity of functions
+    - gocognit      # Compute cognitive complexity of functions
+
+    # Code style
+    - mnd           # Magic number detector
+    - gocritic      # Opinionated linter with many checks
+
+  exclusions:
+    rules:
+      - path: '(.+)_test\.go'
+        linters:
+          - unparam
+          - unused
+      # G101 false positive: event names containing "Token" are not credentials
+      - path: 'cmd/listener/events/events\.go'
+        linters:
+          - gosec
+        text: 'G101'
+
+  settings:
+    sloglint:
+      key-naming-case: pascal
+
+    govet:
+      enable:
+        - shadow      # Check for shadowed variables
+
+    mnd:
+      ignored-numbers:
+        - '0'
+        - '1'
+        - '2'
+        - '10'
+        - '100'
+      ignored-functions:
+        - 'time.*'
+        - 'make'
+
+    revive:
+      rules:
+        - name: empty-block
+          disabled: false
+
+issues:
+  # TODO: Consider using new-from-rev to only lint changes against target branch
+  # new-from-rev: origin/main
