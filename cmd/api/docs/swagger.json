@@ -1,0 +1,1692 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/audit/header-proofs": {
+            "get": {
+                "description": "Retrieves blockchain header proofs for a specific Privacy Node (PN) within a given block range. Returns paginated results ordered by block number. Returns an empty array if no headers match the filters.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "List Header Proofs by Block Range",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "\"11155111\"",
+                        "description": "Chain ID of the Privacy Node",
+                        "name": "chainId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "\"1\"",
+                        "description": "Start block number (inclusive)",
+                        "name": "startBlock",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "\"100\"",
+                        "description": "End block number (inclusive)",
+                        "name": "endBlock",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 50,
+                        "description": "Items per page (default: 50, max: 1000)",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of header proofs, empty array if none found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HeaderProofListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters specified",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/audit/participants": {
+            "get": {
+                "description": "Retrieves a list of participants based on specified query parameters for auditing. Returns an empty array if no participants match the filters.",
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "List Participants by Query Parameters",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Participant's name (partial match)",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Chain ID",
+                        "name": "chainId",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "new",
+                            "active",
+                            "inactive",
+                            "frozen"
+                        ],
+                        "type": "string",
+                        "description": "Status of the participant.",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "participant",
+                            "issuer",
+                            "auditor"
+                        ],
+                        "type": "string",
+                        "description": "Role of the participant.",
+                        "name": "role",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Creation date after which participants were added (inclusive). Accepts Unix ts, YYYY-MM-DD or ISO8601 formats",
+                        "name": "createdAfter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Creation date before which participants were added (exclusive). Accepts Unix ts, YYYY-MM-DD or ISO8601 formats",
+                        "name": "createdBefore",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Participant"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters specified",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/audit/participants/{chainId}": {
+            "get": {
+                "description": "Retrieves a participant's information by their chain ID if it exists in the database.",
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "Get a Participant by their ChainId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The chainId of the participant to retrieve",
+                        "name": "chainId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Participant"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid chainId specified",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No participants found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/audit/tokens": {
+            "get": {
+                "description": "Retrieves a paginated list of tokens based on specified query parameters for auditing. Returns an empty array if no tokens match the filters.",
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "List Tokens by Query Parameters",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Items per page (Default: 10, Max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number (Default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token's name (partial match)",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Issuer ID",
+                        "name": "issuerId",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "new",
+                            "active",
+                            "inactive"
+                        ],
+                        "type": "string",
+                        "description": "Status of the token.",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "erc20",
+                            "erc721",
+                            "erc1155",
+                            "enygma",
+                            "custom message"
+                        ],
+                        "type": "string",
+                        "description": "Token type.",
+                        "name": "ercStandard",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Symbol of the token",
+                        "name": "symbol",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Decimals of the token",
+                        "name": "decimals",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Creation date after which tokens were added (inclusive). Accepts Unix ts, YYYY-MM-DD or ISO8601 formats",
+                        "name": "createdAfter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Creation date before which tokens were added (exclusive). Accepts Unix ts, YYYY-MM-DD or ISO8601 formats",
+                        "name": "createdBefore",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/governance-api-go_types.Paginated-cmd_api_adapters_handlers_TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters specified",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/audit/tokens/{resourceId}": {
+            "get": {
+                "description": "Retrieves a token by its resource ID",
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "Get Token by Resource ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The resource ID of the token",
+                        "name": "resourceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cmd_api_adapters_handlers.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid resourceId specified",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No tokens found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/audit/transactions": {
+            "get": {
+                "description": "Retrieves a paginated list of transactions based on specified query parameters for auditing. Returns an empty array in data field if no transactions match the filters.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "List Transactions by Query Parameters",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by latest transactions (Default: 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by pagination page (Default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by messageId.",
+                        "name": "messageId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by source chain ID",
+                        "name": "sourceChainId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by destination chain ID",
+                        "name": "destinationChainId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by source address",
+                        "name": "fromAddress",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by destination address",
+                        "name": "toAddress",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by resource ID",
+                        "name": "resourceId",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "erc20",
+                            "erc721",
+                            "erc1155",
+                            "enygma",
+                            "dvp_erc721",
+                            "dvp_erc1155"
+                        ],
+                        "type": "string",
+                        "description": "Filter by message type",
+                        "name": "messageType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter transactions initiated after timestamp. Accepts Unix ts, YYYY-MM-DD or ISO8601 formats",
+                        "name": "initiatedAfter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter transactions initiated before timestamp. Accepts Unix ts, YYYY-MM-DD or ISO8601 formats",
+                        "name": "initiatedBefore",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of transactions",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid filter parameters",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error fetching transactions",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/audit/transactions/batch/{batchId}": {
+            "get": {
+                "description": "Retrieves paginated transactions with the same batch ID (non-enygma batches).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "Get Transactions by Regular Batch ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The batch ID",
+                        "name": "batchId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page (default: 10, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of batch transactions",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Batch not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error fetching/processing transaction data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/audit/transactions/dvp/swap/{sharedId}": {
+            "get": {
+                "description": "Retrieves all transactions with the same shared_id (ZkDvp swaps).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "Get Transactions by Shared ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The shared ID",
+                        "name": "sharedId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of transactions with the same shared_id",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.BatchTransactionDto"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transactions not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error fetching/processing transaction data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/audit/transactions/dvp/{transactionId}": {
+            "get": {
+                "description": "Retrieves a transaction by its unique id.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "Get Transaction by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The transaction id",
+                        "name": "transactionId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TransactionDetailDto"
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error fetching/processing transaction data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/audit/transactions/enygma/batch/{batchId}": {
+            "get": {
+                "description": "Retrieves paginated enygma transactions with the same batch ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "Get Aggregated Transactions by Batch ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The batch ID",
+                        "name": "batchId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page (default: 10, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of batch transactions",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Batch not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error fetching/processing transaction data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/audit/transactions/{messageId}": {
+            "get": {
+                "description": "Retrieves a transaction by its unique message ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "Get Transaction by Message ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The message ID",
+                        "name": "messageId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TransactionDetailDto"
+                        }
+                    },
+                    "404": {
+                        "description": "Message not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error fetching/processing transaction data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/flagged": {
+            "get": {
+                "description": "Retrieves all transactions that have been flagged by the flagger service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "Get All Flagged Transactions",
+                "responses": {
+                    "200": {
+                        "description": "flagged: array of flagged transactions",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Error getting flagged transactions",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/participant_info/{chainId}": {
+            "get": {
+                "description": "Retrieves a participant's information by their chain ID if it exists in the database.",
+                "tags": [
+                    "Audit"
+                ],
+                "summary": "Get a Participant by their ChainId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The chainId of the participant to retrieve",
+                        "name": "chainId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Participant"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid chainId specified",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No participants found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/private-network/login": {
+            "post": {
+                "description": "Authenticates a Private Network operator and returns a JWT token in a cookie",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login Private Network Operator",
+                "parameters": [
+                    {
+                        "description": "Credentials",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "password": {
+                                    "type": "string"
+                                },
+                                "username": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or credentials",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/private-network/signup": {
+            "post": {
+                "description": "Creates a new Private Network operator account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Sign Up Private Network Operator",
+                "parameters": [
+                    {
+                        "description": "Credentials",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "password": {
+                                    "type": "string"
+                                },
+                                "username": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or credentials",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Username already exists",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/resource_info_all_chains/{resourceid}": {
+            "get": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Retrieves balance information for a resource across all chains",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Balances"
+                ],
+                "summary": "Get Balance Across All Chains",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Resource ID",
+                        "name": "resourceid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of balances across chains",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Balance"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found in any chain",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/resource_info_list_chains": {
+            "post": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Retrieves balance information for a resource across specific chains",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Balances"
+                ],
+                "summary": "Get Balance Across Specific Chains",
+                "parameters": [
+                    {
+                        "description": "Request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "chains": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "resource_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of balances across specified chains",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Balance"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found in specified chains",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/resources/{chainid}/{resourceid}": {
+            "get": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Retrieves all balances for a chain or specific resource balance\nIf resourceid is \"/\" returns all balances, otherwise returns specific resource",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Balances"
+                ],
+                "summary": "Get Balances in Chain",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Chain ID",
+                        "name": "chainid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Resource ID (use / for all)",
+                        "name": "resourceid",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of balances or single balance object",
+                        "schema": {}
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/token_status/{resourceid}": {
+            "get": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Retrieves token status from the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blockchain"
+                ],
+                "summary": "Get Token Registry Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Resource ID",
+                        "name": "resourceid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TokenRegistryStatusDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid resource ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Token not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "cmd_api_adapters_handlers.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "circulatingSupply": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.CirculatingSupplyEntry"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "decimals": {
+                    "type": "integer"
+                },
+                "ercStandard": {
+                    "type": "string"
+                },
+                "frozenChainIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "issuerId": {
+                    "type": "string"
+                },
+                "metadataURL": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "resourceId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string"
+                },
+                "totalSupply": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Balance": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "chainId": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "ercId": {
+                    "$ref": "#/definitions/domain.BigInt"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "resourceId": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.BigInt": {
+            "type": "object"
+        },
+        "domain.CirculatingSupplyEntry": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "number"
+                },
+                "participantId": {
+                    "type": "string"
+                },
+                "tokenId": {
+                    "description": "Only present for non-fungible tokens (ERC721, ERC1155)",
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Participant": {
+            "type": "object",
+            "properties": {
+                "allowedToBroadcast": {
+                    "type": "boolean"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "flagReason": {
+                    "type": "string"
+                },
+                "flaggedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isFlagged": {
+                    "description": "Flagging fields",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ownerId": {
+                    "type": "string",
+                    "example": "0x29a97C6EfFB8A411DABc6aDEEfaa84f5067C8bbe"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.BatchTransactionDto": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "Transfer amount",
+                    "type": "number"
+                },
+                "createdAt": {
+                    "description": "DB record creation timestamp",
+                    "type": "string"
+                },
+                "destinationAddress": {
+                    "description": "Receiver address",
+                    "type": "string"
+                },
+                "destinationChainId": {
+                    "description": "Destination blockchain ID",
+                    "type": "string"
+                },
+                "messageId": {
+                    "description": "Transaction message ID",
+                    "type": "string"
+                },
+                "sourceAddress": {
+                    "description": "Sender address",
+                    "type": "string"
+                },
+                "sourceChainId": {
+                    "description": "Source blockchain ID",
+                    "type": "string"
+                },
+                "tokenSymbol": {
+                    "description": "Token symbol",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.HeaderProofListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.HeaderProofResponse"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/dto.PaginationMetadata"
+                }
+            }
+        },
+        "dto.HeaderProofResponse": {
+            "type": "object",
+            "properties": {
+                "blockHash": {
+                    "type": "string",
+                    "example": "0x4de2a17c6f8b9e3c7a5d2f1e6b9c4a8d3e7f1c5a9b2d8e6f0c4b7a1d9e3f8c5b"
+                },
+                "blockNumber": {
+                    "type": "string",
+                    "example": "100"
+                },
+                "chainId": {
+                    "type": "string",
+                    "example": "1337"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2024-10-31T10:30:00Z"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "dto.PaginationMetadata": {
+            "type": "object",
+            "properties": {
+                "currentPage": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
+                },
+                "totalRecords": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.TokenRegistryStatusDto": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "decimals": {
+                    "type": "integer"
+                },
+                "ercStandard": {
+                    "type": "integer"
+                },
+                "issuerId": {
+                    "type": "string"
+                },
+                "metadataUrl": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "resourceId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "symbol": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TransactionDetailDto": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "destinationAddress": {
+                    "type": "string"
+                },
+                "destinationChainId": {
+                    "type": "string"
+                },
+                "destinationTimestamp": {
+                    "type": "string"
+                },
+                "destinationTransactionHash": {
+                    "type": "string"
+                },
+                "ercId": {
+                    "type": "string"
+                },
+                "hubBlockNumber": {
+                    "type": "string"
+                },
+                "hubHash": {
+                    "description": "Enygma-specific fields (omitted for non-Enygma)",
+                    "type": "string"
+                },
+                "hubTimestamp": {
+                    "type": "string"
+                },
+                "messageId": {
+                    "type": "string"
+                },
+                "messageType": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "resourceId": {
+                    "type": "string"
+                },
+                "sourceAddress": {
+                    "type": "string"
+                },
+                "sourceChainId": {
+                    "type": "string"
+                },
+                "sourceTimestamp": {
+                    "type": "string"
+                },
+                "sourceTransactionHash": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tokenMetadataDescription": {
+                    "type": "string"
+                },
+                "tokenMetadataImageUrl": {
+                    "type": "string"
+                },
+                "tokenMetadataName": {
+                    "type": "string"
+                },
+                "tokenName": {
+                    "type": "string"
+                },
+                "tokenSymbol": {
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Metadata",
+                    "type": "string"
+                }
+            }
+        },
+        "governance-api-go_types.Paginated-cmd_api_adapters_handlers_TokenResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cmd_api_adapters_handlers.TokenResponse"
+                    }
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

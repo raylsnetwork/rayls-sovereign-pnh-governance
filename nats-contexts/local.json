@@ -1,0 +1,4 @@
+{
+  "url": "nats://nats:4222",
+  "description": "local dev"
+}

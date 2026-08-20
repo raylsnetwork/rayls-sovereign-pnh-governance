@@ -1,0 +1,26 @@
+# syntax=docker.io/docker/dockerfile:1.7-labs
+# ^ This is required so that we can use COPY with --exclude flag.
+# More info at https://docs.docker.com/reference/dockerfile/#copy---exclude
+
+FROM golang:1.26.4-alpine
+
+RUN apk add --no-cache curl bash
+
+RUN go install github.com/air-verse/air@v1.61.7 && \
+    go install github.com/go-delve/delve/cmd/dlv@latest && \
+    cp /go/bin/dlv /usr/local/bin/dlv
+
+# Set the working directory inside the container
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the local package files to the container's workspace
+COPY . .
+
+# Pre-compile
+RUN mkdir -p ./tmp && \
+    go build -gcflags "all=-N -l" -o ./tmp/app/listener /app/cmd/listener/main.go
+
+CMD ["air", "-c", "air.listener.toml"]

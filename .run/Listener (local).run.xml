@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Listener (local)" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="governance-api" />
+    <working_directory value="$PROJECT_DIR$" />
+    <parameters value="run --config config-dev.json" />
+    <kind value="FILE" />
+    <package value="governance-api" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/cmd/listener/main.go" />
+    <method v="2" />
+  </configuration>
+</component>

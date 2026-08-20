@@ -1,0 +1,108 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: governance
+      POSTGRES_HOST_AUTH_METHOD: md5
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d governance"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  nats:
+    image: nats:2.10-alpine
+    command: ["-js", "-m", "8222"]
+    ports:
+      - "4222:4222"   # client
+      - "8222:8222"   # monitoring
+    volumes:
+      - nats_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8222/healthz || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  nui:
+    image: ghcr.io/nats-nui/nui:latest
+    command: ["--nats-cli-contexts", "/nats-contexts"]
+    ports:
+      - "31311:31311"
+    volumes:
+      - ./nats-contexts:/nats-contexts
+    depends_on:
+      nats:
+        condition: service_healthy
+
+  listener:
+    build:
+      context: .
+      dockerfile: Dockerfile.listener-dev
+    environment:
+      CONFIG_FILE: .env.docker
+      GO_DEBUG_PORT: "2345"
+    ports:
+      - "2345:2345"   # dlv debugger
+    volumes:
+      - .:/app
+      - go_cache:/root/.cache/go-build
+      - go_mod:/go/pkg/mod
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    security_opt:
+      - "seccomp:unconfined"   # required for dlv
+
+  flagger:
+    build:
+      context: .
+      dockerfile: Dockerfile.flagger-dev
+    environment:
+      CONFIG_FILE: .env.docker
+      GO_DEBUG_PORT: "2346"
+    ports:
+      - "2346:2346"   # dlv debugger
+    volumes:
+      - .:/app
+      - go_cache:/root/.cache/go-build
+      - go_mod:/go/pkg/mod
+    depends_on:
+      postgres:
+        condition: service_healthy
+    security_opt:
+      - "seccomp:unconfined"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api-dev
+    environment:
+      CONFIG_FILE: .env.docker
+      GO_DEBUG_PORT: "2347"
+    ports:
+      - "8080:8080"   # HTTP
+      - "2347:2347"   # dlv debugger
+    volumes:
+      - .:/app
+      - go_cache:/root/.cache/go-build
+      - go_mod:/go/pkg/mod
+    depends_on:
+      postgres:
+        condition: service_healthy
+    security_opt:
+      - "seccomp:unconfined"
+
+volumes:
+  postgres_data:
+  nats_data:
+  go_cache:
+  go_mod:

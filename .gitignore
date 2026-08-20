@@ -1,0 +1,17 @@
+# IDEs
+.idea/
+.vscode/
+
+# Go debugging
+__debug_bin*
+
+# Build artifacts
+/build/
+
+# Dev Certificates
+certs/
+
+# Configuration — ignore all .env variants but keep *.example templates
+.env
+.env.*
+!*.example

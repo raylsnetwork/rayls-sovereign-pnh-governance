@@ -1,0 +1,40 @@
+# NOTICE
+
+Rayls Privacy PNH Governance API
+Copyright 2026 Rayls Core Ltd.
+
+## Licensing summary
+
+Rayls' own code in this repository is licensed under the **Apache License, Version 2.0** —
+see [LICENSE](./LICENSE).
+
+This project is built with third-party open-source software that remains under its own
+license. The full dependency set is declared in `go.mod` / `go.sum`; the items with
+obligations beyond simple permissive attribution are called out below.
+
+---
+
+## go-ethereum  (LGPL-3.0)
+
+`github.com/ethereum/go-ethereum` is used under the **GNU Lesser General Public License,
+version 3.0**. Only its library packages are imported (client, ABI, crypto, types); none of
+its GPL-3.0 `cmd/` programs are used. The full LGPL-3.0 text is included at
+[licenses/LGPL-3.0.txt](./licenses/LGPL-3.0.txt).
+
+The `api`, `listener`, and `flagger` binaries statically link go-ethereum. In accordance with
+LGPL-3.0 section 4, the corresponding source of this application is published in this
+repository, which — together with the published `go.mod`/`go.sum` pinning the exact
+go-ethereum version — allows a recipient to rebuild the binaries against a modified version of
+go-ethereum.
+
+## HashiCorp libraries  (MPL-2.0)
+
+`github.com/hashicorp/errwrap` and `github.com/hashicorp/go-multierror` are used under the
+**Mozilla Public License, version 2.0**. They are used unmodified as library dependencies; their
+source is available from the upstream repositories at the versions pinned in `go.sum`. The MPL-2.0
+text is available at <https://www.mozilla.org/en-US/MPL/2.0/>.
+
+## Other dependencies
+
+The remaining dependencies are under permissive licenses (MIT, BSD, Apache-2.0). See `go.mod`
+for the complete list.
